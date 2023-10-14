@@ -1,0 +1,35 @@
+<%- include('partials/header.ejs') %>
+<h1>Создание user:</h1>
+<form action="/users/create" method="post">
+    Имя: <input type="text" name="name" required><br><br>
+    Фамилия: <input type="text" name="surname" required><br><br>
+    Город: <input type="text" name="city" required><br><br>
+    Возраст: <input type="number" min="0" max="110" name="age" required><br><br>
+    <input type="submit">
+</form>
+<br>
+<hr>
+<h2><a href="/users/edit">Изменение user...</a></h2>
+<br>
+<hr>
+<h2>Список пользователей</h2>
+<div class="list">
+</div>
+<script>
+  const list = document.querySelector('.list');
+  const getUsers = async () => {
+    let users = await fetch('/users/', { method: 'get' });
+    users = await users.json();
+    return users;
+  }
+  getUsers().then(r => {
+    r.forEach(user => {
+      const div = document.createElement('div');
+      div.classList.add('item');
+      ['name', 'surname', 'city', 'age'].forEach(objKey => {
+        div.innerHTML += `<p>${user[objKey]}</p>`;
+      });
+      list.appendChild(div);
+    });
+  });
+</script>

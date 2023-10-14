@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <%
+  let realTitle = 'Users app';
+  try {
+    if (title !== undefined) {
+      realTitle = title;
+    }
+  } catch (e) {}
+  %>
+  <title><%= realTitle %></title>
+  <style>
+    .item {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 248px;
+    }
+  </style>
+</head>
+<body>

@@ -1,0 +1,17 @@
+<%- include('partials/header.ejs') %>
+<h1>Изменение user</h1>
+<form action="/users/edit" method="POST">
+  Имя: <input type="text" name="currentName" required><br><br>
+  Фамилия: <input type="text" name="currentSurname" required><br><br>
+  Город: <input type="text" name="currentCity" required><br><br>
+  Возраст: <input type="number" min="0" max="110" name="currentAge" required><br><br>
+  <hr>
+  <br>
+  Новое имя: <input type="text" name="name"><br><br>
+  Новая фамилия: <input type="text" name="surname"><br><br>
+  Новый город: <input type="text" name="city"><br><br>
+  Новый возраст: <input type="number" min="0" max="110" name="age"><br><br>
+  <input type="submit">
+</form>
+<br><hr>
+<h2><a href="/">Создание user...</a></h2>
