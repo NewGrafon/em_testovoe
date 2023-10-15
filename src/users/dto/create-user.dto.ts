@@ -1,9 +1,10 @@
 export class CreateUserDto {
   constructor(obj: any) {
-    this.name = obj.name || obj.currentName;
-    this.surname = obj.name || obj.currentSurname;
-    this.city = obj.name || obj.currentCity;
-    this.age = Number(obj.name || obj.currentAge);
+    if (obj === false) return;
+    this.name = obj.name;
+    this.surname = obj.surname;
+    this.city = obj.city;
+    this.age = Number(obj.age);
   }
 
   name: string;

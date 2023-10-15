@@ -5,7 +5,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { FindFilterDto } from './dto/find-filter.dto';
-import { parseNumberOrNull } from '../functions/parse';
 import { RabbitmqService } from '../rabbitmq/rabbitmq.service';
 import { LOGGING_QUEUE } from '../consts/rabbitmq.const';
 
@@ -65,42 +64,27 @@ export class UsersService {
   }
 
   async update(updateUserDto: UpdateUserDto) {
-    updateUserDto.currentAge = Number(updateUserDto.currentAge);
-    updateUserDto.age =
-      parseNumberOrNull(updateUserDto.age) ?? updateUserDto.age;
-
-    const currentUserData: UserEntity = await this.repository.findOneBy({
-      name: updateUserDto.currentName,
-      surname: updateUserDto.currentSurname,
-      city: updateUserDto.currentCity,
-      age: updateUserDto.currentAge,
-    });
-    console.log(currentUserData);
-    const userId: number = currentUserData?.id;
+    const userId: number = (
+      await this.repository.findOneBy({
+        name: updateUserDto.currentName,
+        surname: updateUserDto.currentSurname,
+        city: updateUserDto.currentCity,
+        age: updateUserDto.currentAge,
+      })
+    )?.id;
 
     if (userId) {
-      const newUserData: CreateUserDto = {
-        name:
-          updateUserDto.name.trim().length === 0
-            ? currentUserData.name
-            : updateUserDto.name.trim(),
-        surname:
-          updateUserDto.surname.trim().length === 0
-            ? currentUserData.surname
-            : updateUserDto.surname.trim(),
-        city:
-          updateUserDto.city.trim().length === 0
-            ? currentUserData.city
-            : updateUserDto.city.trim(),
-        age: updateUserDto.age ?? currentUserData.age,
-      };
-
       return await this.repository
-        .update(currentUserData, newUserData)
+        .update(
+          {
+            id: userId,
+          },
+          new CreateUserDto(updateUserDto),
+        )
         .then(() => {
-          newUserData['id'] = userId;
-          newUserData['updatedAt'] = new Date().toISOString();
-          this.rmqService.RMQ_SendMessage(LOGGING_QUEUE, newUserData);
+          updateUserDto['id'] = userId;
+          updateUserDto['updatedAt'] = new Date().toISOString();
+          this.rmqService.RMQ_SendMessage(LOGGING_QUEUE, updateUserDto);
         });
     }
 

@@ -40,7 +40,7 @@ export class UsersController {
 
   @Post('/edit')
   async update(@Body() updateUserDto: UpdateUserDto, @Res() res) {
-    await this.usersService.update(updateUserDto);
+    await this.usersService.update(new UpdateUserDto(updateUserDto));
     return res.redirect('/');
   }
 }
